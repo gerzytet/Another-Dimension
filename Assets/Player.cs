@@ -101,7 +101,7 @@ public class Player : MonoBehaviour
             //Save the current camera rotation
             this.previous3DRotation = this.cameraPivot.rotation;
             //We can change this to ask the level for a direction to snap to 2D later
-            this.newRotation =Quaternion.AngleAxis(0, Vector3.up);
+            this.newRotation = Quaternion.AngleAxis(0, Vector3.up);
             this.playerCamera.orthographic = true;
             this.is3DMode = !is3DMode;
         }
