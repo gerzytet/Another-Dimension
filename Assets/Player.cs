@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     private Transform cameraPivot;
     private Quaternion newRotation;
     private Camera playerCamera;
-    private Transform previous3DTransform;
+    private Quaternion previous3DRotation;
 
     //Camera parameters
     public float rotationAmount;
@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     {
         this.is3DMode = true;
         this.cameraPivot = transform.Find("CameraPivot");
+        this.previous3DRotation = cameraPivot.rotation;
         this.newRotation = cameraPivot.rotation;
         this.playerCamera = cameraPivot.GetComponent<Camera>();
     }
@@ -97,16 +98,16 @@ public class Player : MonoBehaviour
     private void switchDimensionMode() {
         if (is3DMode) {
             print("3d->2d");
-            //Save the current camera configuration
-            this.previous3DTransform = this.cameraPivot;
+            //Save the current camera rotation
+            this.previous3DRotation = this.cameraPivot.rotation;
             //We can change this to ask the level for a direction to snap to 2D later
-            this.cameraPivot.rotation.Set(0,0,1,50);
+            this.newRotation.Set(0, -1, 0, 0);
             this.is3DMode = !is3DMode;
         }
         else {
             print("2d->3d");
             //Load back the original camera configuration
-            this.cameraPivot = this.previous3DTransform;
+            this.newRotation = this.previous3DRotation;
             this.is3DMode = !is3DMode;
         }
 
