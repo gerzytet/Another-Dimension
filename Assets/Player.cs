@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     private int floorContacts = 0;
     private int jumpCooldown = 0;
     private bool is3DMode;
+    private Rigidbody rb;
 
     //Camera fields
     private Transform cameraPivot;
@@ -26,6 +27,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         this.is3DMode = true;
+        this.rb = GetComponent<Rigidbody>();
         this.cameraPivot = transform.Find("CameraPivot");
         this.previous3DRotation = cameraPivot.rotation;
         this.newRotation = cameraPivot.rotation;
@@ -43,7 +45,6 @@ public class Player : MonoBehaviour
     }
 
     private void handleAction() {
-        var rb = GetComponent<Rigidbody>();
         void Move(Vector3 direction)
         {
             rb.AddForce(Vector3.ProjectOnPlane(direction * speed, Vector3.up));
