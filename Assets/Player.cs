@@ -1,11 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float speed = 0.05f;
-    // Start is called before the first frame update
+    public float speed;
+    public float slowdown;
+
+    public float jumpHeight;
+    private int floorContacts = 0;
+    private int jumpCooldown = 0;
     void Start()
     {
         
@@ -15,10 +20,9 @@ public class Player : MonoBehaviour
     void Update()
     {
         var rb = GetComponent<Rigidbody>();
-        rb.velocity = Vector3.zero;
         void Move(Vector3 direction)
         {
-            rb.velocity += Vector3.ProjectOnPlane(direction * speed, Vector3.up);
+            rb.AddForce(Vector3.ProjectOnPlane(direction * speed, Vector3.up));
         }
         
         
@@ -36,6 +40,29 @@ public class Player : MonoBehaviour
         } else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             Move(Camera.main.transform.right);
+        }
+        
+        if (Input.GetKey(KeyCode.Space) && floorContacts > 0 && jumpCooldown <= 0)
+        {
+            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+            jumpCooldown = 20;
+            print("jump");
+        }
+
+        jumpCooldown--;
+
+        floorContacts = 0;
+
+        Vector2 xzVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
+        xzVelocity *= 1 - slowdown;
+        rb.velocity = new Vector3(xzVelocity.x, rb.velocity.y, xzVelocity.y);
+    }
+
+    public void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.transform.position.y < gameObject.transform.position.y)
+        {
+            floorContacts++;
         }
     }
 }
