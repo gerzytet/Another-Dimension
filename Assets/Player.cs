@@ -14,20 +14,28 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        var rb = GetComponent<Rigidbody>();
+        rb.velocity = Vector3.zero;
+        void Move(Vector3 direction)
+        {
+            rb.velocity += Vector3.ProjectOnPlane(direction * speed, Vector3.up);
+        }
+        
+        
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            transform.position += Vector3.ProjectOnPlane(Camera.main.transform.forward * speed, Vector3.up);
+            Move(Camera.main.transform.forward);
         } else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            transform.position -= Vector3.ProjectOnPlane(Camera.main.transform.forward * speed, Vector3.up);
+            Move(-Camera.main.transform.forward);
         }
         
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            transform.position -= Vector3.ProjectOnPlane(Camera.main.transform.right * speed, Vector3.up);
+            Move(-Camera.main.transform.right);
         } else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            transform.position += Vector3.ProjectOnPlane(Camera.main.transform.right * speed, Vector3.up);
+            Move(Camera.main.transform.right);
         }
     }
 }
