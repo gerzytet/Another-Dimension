@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
         this.cameraPivot = transform.Find("CameraPivot");
         this.previous3DRotation = cameraPivot.rotation;
         this.newRotation = cameraPivot.rotation;
-        this.playerCamera = cameraPivot.GetComponent<Camera>();
+        this.playerCamera = cameraPivot.Find("PlayerCamera").GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -83,10 +83,10 @@ public class Player : MonoBehaviour
     }
 
     private void handleCamera() {
-        if (Input.GetKey(KeyCode.Q)) {
+        if (Input.GetKey(KeyCode.Q) && is3DMode) {
             this.newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
         }
-        if (Input.GetKey(KeyCode.E)) {
+        if (Input.GetKey(KeyCode.E) && is3DMode) {
             this.newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
         }
         if (Input.GetKeyDown(KeyCode.Z)) {
@@ -101,13 +101,15 @@ public class Player : MonoBehaviour
             //Save the current camera rotation
             this.previous3DRotation = this.cameraPivot.rotation;
             //We can change this to ask the level for a direction to snap to 2D later
-            this.newRotation.Set(0, -1, 0, 0);
+            this.newRotation =Quaternion.AngleAxis(0, Vector3.up);
+            this.playerCamera.orthographic = true;
             this.is3DMode = !is3DMode;
         }
         else {
             print("2d->3d");
             //Load back the original camera configuration
             this.newRotation = this.previous3DRotation;
+            this.playerCamera.orthographic = false;
             this.is3DMode = !is3DMode;
         }
 
