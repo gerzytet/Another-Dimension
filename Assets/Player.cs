@@ -15,7 +15,6 @@ public class Player : MonoBehaviour
     private int jumpCooldown = 0;
     public int health { get; private set; } = 0;
     public int maxHealth = 3;
-    private bool is3DMode;
     private Rigidbody rb;
 
     //Camera fields
