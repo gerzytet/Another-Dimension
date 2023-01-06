@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
     private int jumpCooldown = 0;
     public int health { get; private set; } = 0;
     public int maxHealth = 3;
+    private bool is3DMode;
+    private Rigidbody rb;
 
     //Camera fields
     private Transform cameraPivot;
@@ -32,6 +34,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         this.is3DMode = true;
+        this.rb = GetComponent<Rigidbody>();
         this.cameraPivot = transform.Find("CameraPivot");
         this.previous3DRotation = cameraPivot.rotation;
         this.newRotation = cameraPivot.rotation;
@@ -51,7 +54,6 @@ public class Player : MonoBehaviour
     }
 
     private void handleAction() {
-        var rb = GetComponent<Rigidbody>();
         void Move(Vector3 direction)
         {
             rb.AddForce(Vector3.ProjectOnPlane(direction * speed, Vector3.up));
@@ -108,7 +110,7 @@ public class Player : MonoBehaviour
             //Save the current camera rotation
             this.previous3DRotation = this.cameraPivot.rotation;
             //We can change this to ask the level for a direction to snap to 2D later
-            this.newRotation =Quaternion.AngleAxis(0, Vector3.up);
+            this.newRotation = Quaternion.AngleAxis(0, Vector3.up);
             this.playerCamera.orthographic = true;
             this.is3DMode = !is3DMode;
         }
