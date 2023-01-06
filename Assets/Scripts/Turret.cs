@@ -7,6 +7,13 @@ public class Turret : MonoBehaviour
     public GameObject projectile;
     public float shootCooldown;
     private float untilNextShot = 0;
+    private AudioSource turretAudioSource;
+    public AudioClip turretShoot;
+
+    void Start() 
+    {
+        turretAudioSource = GetComponent<AudioSource>();
+    }
     
     void FixedUpdate()
     {
@@ -20,6 +27,8 @@ public class Turret : MonoBehaviour
 
     void Shoot()
     {
+        turretAudioSource.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+        turretAudioSource.PlayOneShot(turretShoot, 1.0f);
         Instantiate(projectile, transform.position + transform.up * 0.75f + transform.forward * 0.5f, transform.rotation);
     }
 }
