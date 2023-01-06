@@ -34,6 +34,10 @@ public class Player : MonoBehaviour
     //Audio
     private AudioSource playerAudioSource;
     public AudioClip[] genericHitSounds;
+    
+    //death and respawning
+    public Vector3 respawnPoint;
+    public float fallThreshold = -10f;
 
     void Start()
     {
@@ -46,6 +50,7 @@ public class Player : MonoBehaviour
         health = maxHealth;
         instance = this;
         playerAudioSource = GetComponent<AudioSource>();
+        respawnPoint = transform.position;
     }
 
     // Update is called once per frame
@@ -57,6 +62,21 @@ public class Player : MonoBehaviour
             pending2dColliderChange = false;
         }
         handleCamera();
+        checkDeath();
+    }
+
+    private void checkDeath()
+    {
+        if (transform.position.y < fallThreshold || health <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        health = maxHealth;
+        transform.position = respawnPoint;
     }
 
     void FixedUpdate() {
