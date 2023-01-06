@@ -22,7 +22,8 @@ public class Player : MonoBehaviour
     private Quaternion newRotation;
     private Camera playerCamera;
     private Quaternion previous3DRotation;
-    private bool is3DMode;
+    public bool is3DMode;
+    private bool pending2dColliderChange;
 
     //Camera parameters
     public float rotationAmount;
@@ -45,6 +46,11 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (pending2dColliderChange)
+        {
+            GetComponent<BoxCollider>().size = new Vector3(1, 1, 100);
+            pending2dColliderChange = false;
+        }
         handleCamera();
     }
 
@@ -112,6 +118,9 @@ public class Player : MonoBehaviour
             this.newRotation = Quaternion.AngleAxis(0, Vector3.up);
             this.playerCamera.orthographic = true;
             this.is3DMode = !is3DMode;
+            pending2dColliderChange = true;
+            rb.constraints |= RigidbodyConstraints.FreezeRotationY;
+            transform.rotation = Quaternion.identity;
         }
         else {
             print("2d->3d");
@@ -119,6 +128,8 @@ public class Player : MonoBehaviour
             this.newRotation = this.previous3DRotation;
             this.playerCamera.orthographic = false;
             this.is3DMode = !is3DMode;
+            rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
+            GetComponent<BoxCollider>().size = new Vector3(1, 1, 1);
         }
 
     }

@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Only2ditem : MonoBehaviour
@@ -33,11 +30,5 @@ public class Only2ditem : MonoBehaviour
                 cube.transform.localScale = new Vector3(widthCell, heightCell, Mathf.Min(widthCell, heightCell));
             }
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

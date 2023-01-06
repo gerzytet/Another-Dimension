@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HeartPowerup : MonoBehaviour
@@ -10,8 +7,11 @@ public class HeartPowerup : MonoBehaviour
         var player = other.GetComponent<Player>();
         if (player != null)
         {
-            player.Heal(1);
-            Destroy(gameObject);
+            if (!player.is3DMode)
+            {
+                player.Heal(1);
+                Destroy(gameObject);
+            }
         }
     }
 }
