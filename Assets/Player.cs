@@ -41,30 +41,31 @@ public class Player : MonoBehaviour
     }
 
     void FixedUpdate() {
-        //handleAction();
+        handleAction();
     }
 
     private void handleAction() {
         void Move(Vector3 direction)
         {
+            print(direction);
             rb.AddForce(Vector3.ProjectOnPlane(direction * speed, Vector3.up));
         }
         
         
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            Move(Camera.main.transform.forward);
+            Move(playerCamera.transform.forward);
         } else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            Move(-Camera.main.transform.forward);
+            Move(-playerCamera.transform.forward);
         }
         
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            Move(-Camera.main.transform.right);
+            Move(-playerCamera.transform.right);
         } else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            Move(Camera.main.transform.right);  
+            Move(playerCamera.transform.right);  
         }
         
         if (Input.GetKey(KeyCode.Space) && floorContacts > 0 && jumpCooldown <= 0)
