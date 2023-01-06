@@ -31,6 +31,10 @@ public class Player : MonoBehaviour
 
     public static Player instance;
 
+    //Audio
+    private AudioSource playerAudioSource;
+    public AudioClip[] genericHitSounds;
+
     void Start()
     {
         this.is3DMode = true;
@@ -41,6 +45,7 @@ public class Player : MonoBehaviour
         this.playerCamera = cameraPivot.Find("PlayerCamera").GetComponent<Camera>();
         health = maxHealth;
         instance = this;
+        playerAudioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -136,6 +141,8 @@ public class Player : MonoBehaviour
 
     public void Damage(int amount)
     {
+        playerAudioSource.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+        playerAudioSource.PlayOneShot(genericHitSounds[UnityEngine.Random.Range(0, genericHitSounds.Length - 1)], 1.0f);
         health = Math.Clamp(health - amount, 0, maxHealth);
     }
 
