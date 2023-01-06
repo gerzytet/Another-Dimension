@@ -5,23 +5,29 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    //movement
     public float speed;
     public float slowdown;
-
+    
+    //jump-related variables
     public float jumpHeight;
     private int floorContacts = 0;
     private int jumpCooldown = 0;
-    private bool is3DMode;
+    public int health { get; private set; } = 0;
+    public int maxHealth = 3;
 
     //Camera fields
     private Transform cameraPivot;
     private Quaternion newRotation;
     private Camera playerCamera;
     private Quaternion previous3DRotation;
+    private bool is3DMode;
 
     //Camera parameters
     public float rotationAmount;
     public float rotationTime;
+
+    public static Player instance;
 
     void Start()
     {
@@ -30,6 +36,8 @@ public class Player : MonoBehaviour
         this.previous3DRotation = cameraPivot.rotation;
         this.newRotation = cameraPivot.rotation;
         this.playerCamera = cameraPivot.Find("PlayerCamera").GetComponent<Camera>();
+        health = maxHealth;
+        instance = this;
     }
 
     // Update is called once per frame
@@ -70,7 +78,6 @@ public class Player : MonoBehaviour
         {
             rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
             jumpCooldown = 20;
-            print("jump");
         }
 
         jumpCooldown--;
@@ -115,9 +122,14 @@ public class Player : MonoBehaviour
 
     }
 
+    public void Damage(int amount)
+    {
+        health -= amount;
+    }
+
     public void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.transform.position.y < gameObject.transform.position.y)
+        if (collision.gameObject.transform.position.y < transform.position.y)
         {
             floorContacts++;
         }
