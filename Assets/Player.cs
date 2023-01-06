@@ -47,7 +47,6 @@ public class Player : MonoBehaviour
     private void handleAction() {
         void Move(Vector3 direction)
         {
-            print(direction);
             rb.AddForce(Vector3.ProjectOnPlane(direction * speed, Vector3.up));
         }
         
