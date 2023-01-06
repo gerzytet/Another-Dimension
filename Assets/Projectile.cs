@@ -6,7 +6,7 @@ public class Projectile : MonoBehaviour
     public float lifetime;
     void Start()
     {
-        GetComponent<Rigidbody>().velocity = transform.forward;
+        GetComponent<Rigidbody>().velocity = transform.forward * speed;
         Destroy(gameObject, lifetime);
     }
 
@@ -16,7 +16,7 @@ public class Projectile : MonoBehaviour
         if (player != null)
         {
             player.Damage(1);
-            Destroy(gameObject);
         }
+        Destroy(gameObject);
     }
 }

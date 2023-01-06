@@ -125,7 +125,12 @@ public class Player : MonoBehaviour
 
     public void Damage(int amount)
     {
-        health -= amount;
+        health = Math.Clamp(health - amount, 0, maxHealth);
+    }
+
+    public void Heal(int amount)
+    {
+        health = Math.Clamp(health + amount, 0, maxHealth);
     }
 
     public void OnCollisionStay(Collision collision)
