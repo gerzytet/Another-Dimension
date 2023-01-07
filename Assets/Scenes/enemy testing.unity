@@ -2652,6 +2652,14 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3737482719644922262, guid: 5b4debee8eaa726498a6162a429feaba, type: 3}
+      propertyPath: forceZ
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3737482719644922262, guid: 5b4debee8eaa726498a6162a429feaba, type: 3}
+      propertyPath: forcedZ
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3737482719644922262, guid: 5b4debee8eaa726498a6162a429feaba, type: 3}
       propertyPath: jumpHeight
       value: 8
       objectReference: {fileID: 0}

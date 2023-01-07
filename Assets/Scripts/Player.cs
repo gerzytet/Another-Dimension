@@ -25,6 +25,9 @@ public class Player : MonoBehaviour
     public bool is3DMode;
     private bool pending2dColliderChange;
 
+    public bool forceZ;
+    public float forcedZ;
+
     //Camera parameters
     public float rotationAmount;
     public float rotationTime;
@@ -38,6 +41,7 @@ public class Player : MonoBehaviour
     //death and respawning
     public Vector3 respawnPoint;
     public float fallThreshold = -10f;
+    
 
     void Start()
     {
@@ -63,6 +67,10 @@ public class Player : MonoBehaviour
         }
         handleCamera();
         checkDeath();
+        if (forceZ && !is3DMode)
+        {
+            playerCamera.transform.position = new Vector3(playerCamera.transform.position.x, playerCamera.transform.position.y, forcedZ);
+        }
     }
 
     private void checkDeath()
@@ -148,6 +156,7 @@ public class Player : MonoBehaviour
             transform.rotation = Quaternion.identity;
             //switch to layer "3d", looking up by name
             gameObject.layer = LayerMask.NameToLayer("2d");
+            playerCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("3d only no render"));
         }
         else {
             print("2d->3d");
@@ -158,6 +167,7 @@ public class Player : MonoBehaviour
             rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
             GetComponent<BoxCollider>().size = new Vector3(1, 1, 1);
             gameObject.layer = LayerMask.NameToLayer("3d");
+            playerCamera.cullingMask |= 1 << LayerMask.NameToLayer("3d only no render");
         }
 
     }
