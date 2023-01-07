@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 3737482719644922251}
   - component: {fileID: 6827878160104887903}
   - component: {fileID: -397012997264798141}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cubeman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,7 +128,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3737482719644922261}
-  m_Material: {fileID: 13400000, guid: 60ee8354e1e09e546b1d00d1bfe38987, type: 2}
+  m_Material: {fileID: 13400000, guid: b8ee5a70b29f392468baa74c3cd92f01, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

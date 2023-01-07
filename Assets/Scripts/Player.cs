@@ -146,6 +146,8 @@ public class Player : MonoBehaviour
             pending2dColliderChange = true;
             rb.constraints |= RigidbodyConstraints.FreezeRotationY;
             transform.rotation = Quaternion.identity;
+            //switch to layer "3d", looking up by name
+            gameObject.layer = LayerMask.NameToLayer("2d");
         }
         else {
             print("2d->3d");
@@ -155,6 +157,7 @@ public class Player : MonoBehaviour
             this.is3DMode = !is3DMode;
             rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
             GetComponent<BoxCollider>().size = new Vector3(1, 1, 1);
+            gameObject.layer = LayerMask.NameToLayer("3d");
         }
 
     }
