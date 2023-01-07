@@ -23,7 +23,6 @@ public class Player : MonoBehaviour
     private Camera playerCamera;
     private Quaternion previous3DRotation;
     public bool is3DMode;
-    private bool pending2dColliderChange;
 
     //Camera parameters
     public float rotationAmount;
@@ -56,11 +55,6 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (pending2dColliderChange)
-        {
-            GetComponent<BoxCollider>().size = new Vector3(1, 1, 100);
-            pending2dColliderChange = false;
-        }
         handleAction();
         handleCamera();
     }
@@ -135,21 +129,19 @@ public class Player : MonoBehaviour
     private void switchDimensionMode() {
         if (is3DMode) {
             print("3d->2d");
-            //Save the current camera rotation
-            this.previous3DRotation = this.cameraPivot.rotation;
-            print(this.previous3DRotation = this.cameraPivot.localRotation * transform.rotation);
+            //Save the current camera rotation, in global context
+            this.previous3DRotation = this.previous3DRotation = this.cameraPivot.localRotation * transform.rotation;
             //We can change this to ask the level for a direction to snap to 2D later
             this.newRotation = Quaternion.AngleAxis(0, Vector3.up);
             this.playerCamera.orthographic = true;
             this.is3DMode = !is3DMode;
-            pending2dColliderChange = true;
             rb.constraints |= RigidbodyConstraints.FreezeRotationY;
             transform.rotation = Quaternion.identity;
         }
         else {
             print("2d->3d");
-            //Load back the original camera configuration
-            this.newRotation = this.previous3DRotation;
+            //Load back the original camera configuration, in global context
+            this.newRotation = this.previous3DRotation * Quaternion.Inverse(this.transform.rotation);
             this.playerCamera.orthographic = false;
             this.is3DMode = !is3DMode;
             rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
