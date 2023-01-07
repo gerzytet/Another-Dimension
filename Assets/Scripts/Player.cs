@@ -32,9 +32,9 @@ public class Player : MonoBehaviour
     private Quaternion previous3DRotation;
     private Quaternion CameraAngleConstant2D;
     public bool is3DMode;
+    private Vector3 currentMousePosition;
 
     public bool forceZ;
-    public float forcedZ;
 
     //Camera parameters
     public float rotationAmount;
@@ -67,6 +67,7 @@ public class Player : MonoBehaviour
         playerAudioSource = GetComponent<AudioSource>();
         respawnPoint = transform.position;
         this.CameraAngleConstant2D = Quaternion.AngleAxis(0, Vector3.up);
+        this.currentMousePosition = Input.mousePosition;
 
         dimensionTransitionFlag = false;
     }
@@ -158,33 +159,37 @@ public class Player : MonoBehaviour
 
     private void handleCamera()
     {
-        if (Input.GetKey(KeyCode.Q) && is3DMode)
-        {
-            this.newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
-        }
-        if (Input.GetKey(KeyCode.E) && is3DMode)
-        {
-            this.newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
-        }
         if (is3DMode)
         {
+            if (Input.GetKey(KeyCode.Q))
+            {
+                this.newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
+            }
+            if (Input.GetKey(KeyCode.E))
+            {
+                this.newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
+            }
+
             this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
 
-            if (is3DMode)
+            this.cameraPivot.eulerAngles += (new Vector3(currentMousePosition.y - Input.mousePosition.y, currentMousePosition.x - Input.mousePosition.x, 0f) / 5f);
+
+            this.newRotation = cameraPivot.rotation;
+
+            this.currentMousePosition = Input.mousePosition;
+
+            //from player to camera
+            Ray ray = new Ray(transform.position, playerCamera.transform.position - transform.position);
+            //ignore the 3d layer, which contains only the player
+            bool found = Physics.Raycast(ray, out RaycastHit hit, cameraDistance, ~(1 << LayerMask.NameToLayer("3d")));
+            if (found)
             {
-                //from player to camera
-                Ray ray = new Ray(transform.position, playerCamera.transform.position - transform.position);
-                //ignore the 3d layer, which contains only the player
-                bool found = Physics.Raycast(ray, out RaycastHit hit, cameraDistance, ~(1 << LayerMask.NameToLayer("3d")));
-                if (found)
-                {
-                    print("HIT " + hit.distance);
-                    setCameraDistance(hit.distance);
-                }
-                else
-                {
-                    setCameraDistance(cameraDistance);
-                }
+                print("HIT " + hit.distance);
+                setCameraDistance(hit.distance);
+            }
+            else
+            {
+                setCameraDistance(cameraDistance);
             }
         }
     }
