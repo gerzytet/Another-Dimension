@@ -2358,8 +2358,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1623048145}
   m_LocalRotation: {x: 0.5000002, y: -0.49999985, z: 0.49999985, w: 0.5000002}
-  m_LocalPosition: {x: -5.34, y: 4.3892, z: -12.9414}
-  m_LocalScale: {x: 24.19811, y: 1, z: 8.300928}
+  m_LocalPosition: {x: -5.34, y: 4.3892, z: -12.4982}
+  m_LocalScale: {x: 25.086111, y: 1, z: 8.300928}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1636262132}
@@ -2883,7 +2883,7 @@ GameObject:
   - component: {fileID: 1860166768}
   - component: {fileID: 1860166767}
   - component: {fileID: 1860166766}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3487,6 +3487,14 @@ PrefabInstance:
     - target: {fileID: 3737482719644922261, guid: 5b4debee8eaa726498a6162a429feaba, type: 3}
       propertyPath: m_Name
       value: Cubeman
+      objectReference: {fileID: 0}
+    - target: {fileID: 3737482719644922262, guid: 5b4debee8eaa726498a6162a429feaba, type: 3}
+      propertyPath: forceZ
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3737482719644922262, guid: 5b4debee8eaa726498a6162a429feaba, type: 3}
+      propertyPath: forcedZ
+      value: -40
       objectReference: {fileID: 0}
     - target: {fileID: 3737482719644922262, guid: 5b4debee8eaa726498a6162a429feaba, type: 3}
       propertyPath: jumpHeight
