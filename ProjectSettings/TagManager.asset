@@ -8,11 +8,11 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - 3d only
   - Water
   - UI
-  - 
-  - 
+  - 3d
+  - 2d
   - 
   - 
   - 
