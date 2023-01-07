@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    //general constants
+    public float zDimensionWidth = 100f;
+
+    //Components
+    private Rigidbody rb;
+    private AudioSource playerAudioSource;
+    private BoxCollider playerCollider;
+
     //movement
     public float speed;
     public float slowdown;
@@ -15,13 +23,13 @@ public class Player : MonoBehaviour
     private int jumpCooldown = 0;
     public int health { get; private set; } = 0;
     public int maxHealth = 3;
-    private Rigidbody rb;
 
     //Camera fields
     private Transform cameraPivot;
     private Quaternion newRotation;
     private Camera playerCamera;
     private Quaternion previous3DRotation;
+    private Quaternion CameraAngleConstant2D;
     public bool is3DMode;
 
     //Camera parameters
@@ -31,17 +39,20 @@ public class Player : MonoBehaviour
     public static Player instance;
 
     //Audio
-    private AudioSource playerAudioSource;
     public AudioClip[] genericHitSounds;
     
     //death and respawning
     public Vector3 respawnPoint;
     public float fallThreshold = -10f;
+    
+    //flags
+    public bool dimensionTransitionFlag;
 
     void Start()
     {
         this.is3DMode = true;
         this.rb = GetComponent<Rigidbody>();
+        this.playerCollider = rb.gameObject.GetComponent<BoxCollider>();
         this.cameraPivot = transform.Find("CameraPivot");
         this.previous3DRotation = cameraPivot.rotation;
         this.newRotation = cameraPivot.rotation;
@@ -50,6 +61,9 @@ public class Player : MonoBehaviour
         instance = this;
         playerAudioSource = GetComponent<AudioSource>();
         respawnPoint = transform.position;
+        this.CameraAngleConstant2D = Quaternion.AngleAxis(0, Vector3.up);
+
+        dimensionTransitionFlag = false;
     }
 
     // Update is called once per frame
@@ -74,6 +88,17 @@ public class Player : MonoBehaviour
     }
 
     void FixedUpdate() {
+        if (dimensionTransitionFlag) {
+            if (!is3DMode) {
+                this.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
+                this.playerCollider.size = new Vector3(zDimensionWidth, 1, 1);
+                rb.constraints |= RigidbodyConstraints.FreezeRotationY;
+            } else {
+                this.playerCollider.size = new Vector3(1, 1, 1);
+                rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
+            }
+            dimensionTransitionFlag = false;
+        }
         checkDeath();
         jumpCooldown--;
          Vector2 xzVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
@@ -117,13 +142,18 @@ public class Player : MonoBehaviour
     }
 
     private void handleCamera() {
-        if (Input.GetKey(KeyCode.Q) && is3DMode) {
-            this.newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
+        if (!is3DMode) {
+            this.cameraPivot.rotation = this.CameraAngleConstant2D;
         }
-        if (Input.GetKey(KeyCode.E) && is3DMode) {
+        if (Input.GetKey(KeyCode.Q) && is3DMode) {
             this.newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
         }
-        this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
+        if (Input.GetKey(KeyCode.E) && is3DMode) {
+            this.newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
+        }
+        if (is3DMode) {
+                this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
+        }
     }
 
     private void switchDimensionMode() {
@@ -131,12 +161,9 @@ public class Player : MonoBehaviour
             print("3d->2d");
             //Save the current camera rotation, in global context
             this.previous3DRotation = this.previous3DRotation = this.cameraPivot.localRotation * transform.rotation;
-            //We can change this to ask the level for a direction to snap to 2D later
-            this.newRotation = Quaternion.AngleAxis(0, Vector3.up);
+            this.newRotation = this.CameraAngleConstant2D;
             this.playerCamera.orthographic = true;
             this.is3DMode = !is3DMode;
-            rb.constraints |= RigidbodyConstraints.FreezeRotationY;
-            transform.rotation = Quaternion.identity;
         }
         else {
             print("2d->3d");
@@ -144,10 +171,8 @@ public class Player : MonoBehaviour
             this.newRotation = this.previous3DRotation * Quaternion.Inverse(this.transform.rotation);
             this.playerCamera.orthographic = false;
             this.is3DMode = !is3DMode;
-            rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
-            GetComponent<BoxCollider>().size = new Vector3(1, 1, 1);
         }
-
+        this.dimensionTransitionFlag = true;
     }
 
     public void Damage(int amount)
