@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.AssetImporters;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -33,6 +34,7 @@ public class Player : MonoBehaviour
     public float rotationTime;
 
     public static Player instance;
+    public float cameraDistance = 5f;
 
     //Audio
     private AudioSource playerAudioSource;
@@ -136,6 +138,23 @@ public class Player : MonoBehaviour
             this.switchDimensionMode();
         }
         this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
+
+        if (is3DMode)
+        {
+            //from player to camera
+            Ray ray = new Ray(transform.position, playerCamera.transform.position - transform.position);
+            //ignore the 3d layer, which contains only the player
+            bool found = Physics.Raycast(ray, out RaycastHit hit, cameraDistance, ~(1 << LayerMask.NameToLayer("3d")));
+            if (found)
+            {
+                print("HIT " + hit.distance);
+                setCameraDistance(hit.distance);
+            }
+            else
+            {
+                setCameraDistance(cameraDistance);
+            }
+        }
     }
 
     private void switchDimensionMode() {
@@ -166,11 +185,16 @@ public class Player : MonoBehaviour
             playerCamera.cullingMask |= 1 << LayerMask.NameToLayer("3d only no render");
             if (forceZ)
             {
-                playerCamera.transform.localPosition = new Vector3(playerCamera.transform.localPosition.x,
-                    playerCamera.transform.localPosition.y, -5);
+                setCameraDistance(cameraDistance);
             }
         }
 
+    }
+
+    private void setCameraDistance(float dist)
+    {
+        playerCamera.transform.localPosition = new Vector3(playerCamera.transform.localPosition.x,
+            playerCamera.transform.localPosition.y, -dist);
     }
 
     public void Damage(int amount)
