@@ -62,14 +62,13 @@ public class Player : MonoBehaviour
             pending2dColliderChange = false;
         }
         handleCamera();
-        checkDeath();
     }
 
     private void checkDeath()
     {
         if (transform.position.y < fallThreshold || health <= 0)
         {
-            Die();
+            Die(); //rip
         }
     }
 
@@ -81,6 +80,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate() {
         handleAction();
+        checkDeath();
     }
 
     private void handleAction() {
@@ -112,6 +112,10 @@ public class Player : MonoBehaviour
             jumpCooldown = 20;
         }
 
+        if (Input.GetKeyDown(KeyCode.Z)) {
+            this.switchDimensionMode();
+        }
+
         jumpCooldown--;
 
         floorContacts = 0;
@@ -127,9 +131,6 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.E) && is3DMode) {
             this.newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
-        }
-        if (Input.GetKeyDown(KeyCode.Z)) {
-            this.switchDimensionMode();
         }
         this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
     }
