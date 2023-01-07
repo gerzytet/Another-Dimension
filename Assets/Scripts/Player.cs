@@ -101,6 +101,7 @@ public class Player : MonoBehaviour
                 this.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
                 this.playerCollider.size = new Vector3(zDimensionWidth, 1, 1);
                 rb.constraints |= RigidbodyConstraints.FreezeRotationY;
+                this.cameraPivot.rotation = this.CameraAngleConstant2D;
             }
             else
             {
@@ -157,10 +158,6 @@ public class Player : MonoBehaviour
 
     private void handleCamera()
     {
-        if (!is3DMode)
-        {
-            this.cameraPivot.rotation = this.CameraAngleConstant2D;
-        }
         if (Input.GetKey(KeyCode.Q) && is3DMode)
         {
             this.newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
