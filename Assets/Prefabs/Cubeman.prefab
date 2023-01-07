@@ -150,12 +150,15 @@ MonoBehaviour:
   slowdown: 0
   jumpHeight: 4
   maxHealth: 3
+  is3DMode: 0
   rotationAmount: 1
   rotationTime: 4
   genericHitSounds:
   - {fileID: 8300000, guid: 4dbcf9b86fa99104489fd70ec2c4eb21, type: 3}
   - {fileID: 8300000, guid: d74e6953ea29f8f408d548e876ea1453, type: 3}
   - {fileID: 8300000, guid: a4bf4df953532d64fa0899ab3919ba16, type: 3}
+  respawnPoint: {x: 0, y: 0, z: 0}
+  fallThreshold: -10
 --- !u!114 &3737482719644922251
 MonoBehaviour:
   m_ObjectHideFlags: 0
