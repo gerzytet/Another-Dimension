@@ -61,6 +61,7 @@ public class Player : MonoBehaviour
             GetComponent<BoxCollider>().size = new Vector3(1, 1, 100);
             pending2dColliderChange = false;
         }
+        handleAction();
         handleCamera();
     }
 
@@ -79,8 +80,11 @@ public class Player : MonoBehaviour
     }
 
     void FixedUpdate() {
-        handleAction();
         checkDeath();
+        jumpCooldown--;
+         Vector2 xzVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
+        xzVelocity *= 1 - slowdown;
+        rb.velocity = new Vector3(xzVelocity.x, rb.velocity.y, xzVelocity.y);
     }
 
     private void handleAction() {
@@ -88,7 +92,6 @@ public class Player : MonoBehaviour
         {
             rb.AddForce(Vector3.ProjectOnPlane(direction * speed, Vector3.up));
         }
-        
         
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
@@ -116,13 +119,7 @@ public class Player : MonoBehaviour
             this.switchDimensionMode();
         }
 
-        jumpCooldown--;
-
         floorContacts = 0;
-
-        Vector2 xzVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
-        xzVelocity *= 1 - slowdown;
-        rb.velocity = new Vector3(xzVelocity.x, rb.velocity.y, xzVelocity.y);
     }
 
     private void handleCamera() {
@@ -140,6 +137,7 @@ public class Player : MonoBehaviour
             print("3d->2d");
             //Save the current camera rotation
             this.previous3DRotation = this.cameraPivot.rotation;
+            print(this.previous3DRotation = this.cameraPivot.localRotation * transform.rotation);
             //We can change this to ask the level for a direction to snap to 2D later
             this.newRotation = Quaternion.AngleAxis(0, Vector3.up);
             this.playerCamera.orthographic = true;
