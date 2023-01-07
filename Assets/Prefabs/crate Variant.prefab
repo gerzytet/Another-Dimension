@@ -217,4 +217,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a411625f98ab60f4eb35d548c97f0b6c, type: 3}
   - {fileID: 8300000, guid: b4d9fc64aa8d46d4e836ba8fde458783, type: 3}
   - {fileID: 8300000, guid: ee3df87df0963f547bae3759355238b9, type: 3}
-  crateDragClips: []
+  velocityThreshold: 5
+  pitchMaximum: 1
