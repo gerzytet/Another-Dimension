@@ -147,7 +147,6 @@ public class Player : MonoBehaviour
             bool found = Physics.Raycast(ray, out RaycastHit hit, cameraDistance, ~(1 << LayerMask.NameToLayer("3d")));
             if (found)
             {
-                print("HIT " + hit.distance);
                 setCameraDistance(hit.distance);
             }
             else
