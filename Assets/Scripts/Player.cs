@@ -76,7 +76,6 @@ public class Player : MonoBehaviour
     {
         handleAction();
         handleCamera();
-        checkDeath();
     }
 
     private void checkDeath()
