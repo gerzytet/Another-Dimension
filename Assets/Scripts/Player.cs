@@ -67,10 +67,6 @@ public class Player : MonoBehaviour
         }
         handleCamera();
         checkDeath();
-        if (forceZ && !is3DMode)
-        {
-            playerCamera.transform.position = new Vector3(playerCamera.transform.position.x, playerCamera.transform.position.y, forcedZ);
-        }
     }
 
     private void checkDeath()
@@ -168,6 +164,11 @@ public class Player : MonoBehaviour
             GetComponent<BoxCollider>().size = new Vector3(1, 1, 1);
             gameObject.layer = LayerMask.NameToLayer("3d");
             playerCamera.cullingMask |= 1 << LayerMask.NameToLayer("3d only no render");
+            if (forceZ)
+            {
+                playerCamera.transform.localPosition = new Vector3(playerCamera.transform.localPosition.x,
+                    playerCamera.transform.localPosition.y, -5);
+            }
         }
 
     }
