@@ -6,28 +6,35 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    //general constants
+    public float zDimensionWidth = 100f;
+
+    //Components
+    private Rigidbody rb;
+    private AudioSource playerAudioSource;
+    private BoxCollider playerCollider;
+
     //movement
     public float speed;
     public float slowdown;
-    
+
     //jump-related variables
     public float jumpHeight;
     private int floorContacts = 0;
     private int jumpCooldown = 0;
     public int health { get; private set; } = 0;
     public int maxHealth = 3;
-    private Rigidbody rb;
 
     //Camera fields
     private Transform cameraPivot;
     private Quaternion newRotation;
     private Camera playerCamera;
     private Quaternion previous3DRotation;
+    private Quaternion CameraAngleConstant2D;
     public bool is3DMode;
-    private bool pending2dColliderChange;
+    private Vector3 currentMousePosition;
 
     public bool forceZ;
-    public float forcedZ;
 
     //Camera parameters
     public float rotationAmount;
@@ -37,18 +44,20 @@ public class Player : MonoBehaviour
     public float cameraDistance = 5f;
 
     //Audio
-    private AudioSource playerAudioSource;
     public AudioClip[] genericHitSounds;
-    
+
     //death and respawning
     public Vector3 respawnPoint;
     public float fallThreshold = -10f;
-    
+
+    //flags
+    public bool dimensionTransitionFlag;
 
     void Start()
     {
         this.is3DMode = true;
         this.rb = GetComponent<Rigidbody>();
+        this.playerCollider = rb.gameObject.GetComponent<BoxCollider>();
         this.cameraPivot = transform.Find("CameraPivot");
         this.previous3DRotation = cameraPivot.rotation;
         this.newRotation = cameraPivot.rotation;
@@ -57,25 +66,24 @@ public class Player : MonoBehaviour
         instance = this;
         playerAudioSource = GetComponent<AudioSource>();
         respawnPoint = transform.position;
+        this.CameraAngleConstant2D = Quaternion.AngleAxis(0, Vector3.up);
+        this.currentMousePosition = Input.mousePosition;
+
+        dimensionTransitionFlag = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (pending2dColliderChange)
-        {
-            GetComponent<BoxCollider>().size = new Vector3(1, 1, 100);
-            pending2dColliderChange = false;
-        }
+        handleAction();
         handleCamera();
-        checkDeath();
     }
 
     private void checkDeath()
     {
         if (transform.position.y < fallThreshold || health <= 0)
         {
-            Die();
+            Die(); //rip
         }
     }
 
@@ -85,62 +93,91 @@ public class Player : MonoBehaviour
         transform.position = respawnPoint;
     }
 
-    void FixedUpdate() {
-        handleAction();
+    void FixedUpdate()
+    {
+        if (dimensionTransitionFlag)
+        {
+            if (!is3DMode)
+            {
+                this.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
+                this.playerCollider.size = new Vector3(zDimensionWidth, 1, 1);
+                rb.constraints |= RigidbodyConstraints.FreezeRotationY;
+                this.cameraPivot.rotation = this.CameraAngleConstant2D;
+            }
+            else
+            {
+                this.playerCollider.size = new Vector3(1, 1, 1);
+                rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
+            }
+            dimensionTransitionFlag = false;
+        }
+        checkDeath();
+        jumpCooldown--;
+        Vector2 xzVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
+        xzVelocity *= 1 - slowdown;
+        rb.velocity = new Vector3(xzVelocity.x, rb.velocity.y, xzVelocity.y);
     }
 
-    private void handleAction() {
+    private void handleAction()
+    {
         void Move(Vector3 direction)
         {
             rb.AddForce(Vector3.ProjectOnPlane(direction * speed, Vector3.up));
         }
-        
-        
+
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             Move(playerCamera.transform.forward);
-        } else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        }
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             Move(-playerCamera.transform.forward);
         }
-        
+
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             Move(-playerCamera.transform.right);
-        } else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-        {
-            Move(playerCamera.transform.right);  
         }
-        
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            Move(playerCamera.transform.right);
+        }
+
         if (Input.GetKey(KeyCode.Space) && floorContacts > 0 && jumpCooldown <= 0)
         {
             rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
             jumpCooldown = 20;
         }
 
-        jumpCooldown--;
-
-        floorContacts = 0;
-
-        Vector2 xzVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
-        xzVelocity *= 1 - slowdown;
-        rb.velocity = new Vector3(xzVelocity.x, rb.velocity.y, xzVelocity.y);
-    }
-
-    private void handleCamera() {
-        if (Input.GetKey(KeyCode.Q) && is3DMode) {
-            this.newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
-        }
-        if (Input.GetKey(KeyCode.E) && is3DMode) {
-            this.newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
-        }
-        if (Input.GetKeyDown(KeyCode.Z)) {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
             this.switchDimensionMode();
         }
-        this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
 
+        floorContacts = 0;
+    }
+
+    private void handleCamera()
+    {
         if (is3DMode)
         {
+            if (Input.GetKey(KeyCode.Q))
+            {
+                this.newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
+            }
+            if (Input.GetKey(KeyCode.E))
+            {
+                this.newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
+            }
+
+            this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
+
+            this.cameraPivot.eulerAngles += (new Vector3(currentMousePosition.y - Input.mousePosition.y, currentMousePosition.x - Input.mousePosition.x, 0f) / 5f);
+
+            this.newRotation = cameraPivot.rotation;
+
+            this.currentMousePosition = Input.mousePosition;
+
             //from player to camera
             Ray ray = new Ray(transform.position, playerCamera.transform.position - transform.position);
             //ignore the 3d layer, which contains only the player
@@ -156,38 +193,35 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void switchDimensionMode() {
-        if (is3DMode) {
+    private void switchDimensionMode()
+    {
+        if (is3DMode)
+        {
             print("3d->2d");
-            //Save the current camera rotation
-            this.previous3DRotation = this.cameraPivot.rotation;
-            //We can change this to ask the level for a direction to snap to 2D later
-            this.newRotation = Quaternion.AngleAxis(0, Vector3.up);
+            //Save the current camera rotation, in global context
+            this.previous3DRotation = this.previous3DRotation = this.cameraPivot.localRotation * transform.rotation;
+            this.newRotation = this.CameraAngleConstant2D;
             this.playerCamera.orthographic = true;
-            this.is3DMode = !is3DMode;
-            pending2dColliderChange = true;
-            rb.constraints |= RigidbodyConstraints.FreezeRotationY;
-            transform.rotation = Quaternion.identity;
             //switch to layer "3d", looking up by name
             gameObject.layer = LayerMask.NameToLayer("2d");
             playerCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("3d only no render"));
-        }
-        else {
-            print("2d->3d");
-            //Load back the original camera configuration
-            this.newRotation = this.previous3DRotation;
-            this.playerCamera.orthographic = false;
             this.is3DMode = !is3DMode;
-            rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
-            GetComponent<BoxCollider>().size = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            print("2d->3d");
+            //Load back the original camera configuration, in global context
+            this.newRotation = this.previous3DRotation * Quaternion.Inverse(this.transform.rotation);
+            this.playerCamera.orthographic = false;
             gameObject.layer = LayerMask.NameToLayer("3d");
             playerCamera.cullingMask |= 1 << LayerMask.NameToLayer("3d only no render");
             if (forceZ)
             {
                 setCameraDistance(cameraDistance);
             }
+            this.is3DMode = !is3DMode;
         }
-
+        this.dimensionTransitionFlag = true;
     }
 
     private void setCameraDistance(float dist)
