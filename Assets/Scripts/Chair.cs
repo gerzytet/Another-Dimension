@@ -1,21 +1,71 @@
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Chair : MonoBehaviour
 {
     private bool inRange = false;
     private bool sit = false;
+    public string dialogue1 = "What was that noise?";
+    public string dialogue2 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+    public GameObject explosionPoint;
+    private float oldSpeed;
+
+    void explodeEverything()
+    {
+        var objects = FindObjectsOfType<BoxCollider>();
+        List<GameObject> toScatter = new List<GameObject>();
+        //toScatter.Add(Player.instance.gameObject);
+        foreach (BoxCollider box in objects)
+        {
+            if (box.isTrigger)
+            {
+                continue;
+            }
+            var obj = box.gameObject;
+            var rb = obj.GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                obj.AddComponent<Rigidbody>();
+            }
+            toScatter.Add(obj);
+        }
+
+        foreach (GameObject obj in toScatter)
+        {
+            obj.GetComponent<Rigidbody>().AddForce(explosionPoint.transform.position - obj.transform.position);
+        }
+    }
+
+    IEnumerator ExplosionCutscene()
+    {
+        DialogueManager.instance.SetDialogue(new List<string>() {dialogue1});
+        DialogueManager.instance.BlurDialogue();
+        yield return new WaitForSeconds(5);
+        DialogueManager.instance.SetDialogue(new() {dialogue2});
+        explodeEverything();
+        sit = false;
+        Player p = Player.instance;
+        p.GetComponent<Rigidbody>().useGravity = true;
+        p.speed = oldSpeed;
+        DialogueManager.instance.enableSkip = false;
+        yield return new WaitForSeconds(3);
+        DialogueManager.instance.HideDialogue();
+    }
     void Update()
     {
         Player p = Player.instance;
         if (inRange && Input.GetKeyDown(KeyCode.R))
         {
             Debug.Log("Sit");
+            oldSpeed = p.speed;
             p.speed = 0f;
             p.GetComponent<Rigidbody>().useGravity = false;
             p.transform.position = transform.position - new Vector3(0f, 0f, 0.5f);
             sit = true;
+            StartCoroutine(ExplosionCutscene());
         }
 
         if (sit)

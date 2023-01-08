@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -12,6 +13,11 @@ public class DialogueManager : MonoBehaviour
     public List<GameObject> dialogueObjects;
     public TextMeshProUGUI tmp;
     public static DialogueManager instance;
+    public bool enableSkip = true;
+    public Image distortionImage;
+    public Material broken;
+    public Material blurred;
+    public Material clear;
 
     void Start()
     {
@@ -25,7 +31,7 @@ public class DialogueManager : MonoBehaviour
             progress += displayRate * Time.deltaTime;
             progress = Mathf.Min(progress, curr.Length);
         }
-        if (Input.GetMouseButtonDown(0) && sentences.Count > 0)
+        if (Input.GetMouseButtonDown(0) && sentences.Count > 0 && enableSkip)
         {
             string curr = sentences.Peek();
             if (progress < curr.Length)
@@ -50,5 +56,34 @@ public class DialogueManager : MonoBehaviour
             string slice = curr.Substring(0, (int)progress);
             tmp.text = slice;
         }
+    }
+    
+    public void SetDialogue(List<string> sentences)
+    {
+        this.sentences.Clear();
+        foreach (string sentence in sentences)
+        {
+            this.sentences.Enqueue(sentence);
+        }
+    }
+
+    private void SetMaterial(Material mat)
+    {
+        distortionImage.material = mat;
+    }
+
+    public void BlurDialogue()
+    {
+        SetMaterial(blurred);
+    }
+    
+    public void HideDialogue()
+    {
+        SetMaterial(broken);
+    }
+    
+    public void RestoreDialogue()
+    {
+        SetMaterial(clear);
     }
 }
