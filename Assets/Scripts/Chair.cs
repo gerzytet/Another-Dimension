@@ -12,7 +12,11 @@ public class Chair : MonoBehaviour
     public string dialogue2 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     public GameObject explosionPoint;
     private float oldSpeed;
-
+    private AudioSource introAudioSource;
+    void Start() 
+    {
+        introAudioSource = GetComponent<AudioSource>();
+    }
     void explodeEverything()
     {
         var objects = FindObjectsOfType<BoxCollider>();
@@ -41,6 +45,7 @@ public class Chair : MonoBehaviour
 
     IEnumerator ExplosionCutscene()
     {
+        introAudioSource.Play();
         DialogueManager.instance.SetDialogue(new List<string>() {dialogue1});
         DialogueManager.instance.BlurDialogue();
         yield return new WaitForSeconds(5);
