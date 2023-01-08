@@ -39,6 +39,7 @@ public class Player : MonoBehaviour
     //Camera parameters
     public float rotationAmount;
     public float rotationTime;
+    public float maxCameraYAngle;
 
     public static Player instance;
     public float cameraDistance = 5f;
@@ -55,21 +56,26 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        this.is3DMode = true;
+        //Get components
         this.rb = GetComponent<Rigidbody>();
         this.playerCollider = rb.gameObject.GetComponent<BoxCollider>();
+        this.is3DMode = true;
+        playerAudioSource = GetComponent<AudioSource>();
+        
+        //Find components
         this.cameraPivot = transform.Find("CameraPivot");
+        this.playerCamera = cameraPivot.Find("PlayerCamera").GetComponent<Camera>();
+        
+        //Variable in itializations
         this.previous3DRotation = cameraPivot.rotation;
         this.newRotation = cameraPivot.rotation;
-        this.playerCamera = cameraPivot.Find("PlayerCamera").GetComponent<Camera>();
         health = maxHealth;
-        instance = this;
-        playerAudioSource = GetComponent<AudioSource>();
         respawnPoint = transform.position;
         this.CameraAngleConstant2D = Quaternion.AngleAxis(0, Vector3.up);
-        this.currentMousePosition = Input.mousePosition;
-
+        this.currentMousePosition = new Vector3(Screen.width/2f, Screen.height/2f, 0f); //initial camera poisition is center of screen
         dimensionTransitionFlag = false;
+        
+        instance = this;
     }
 
     // Update is called once per frame
@@ -164,7 +170,7 @@ public class Player : MonoBehaviour
         {
             this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
 
-            this.cameraPivot.eulerAngles += (new Vector3(Input.mousePosition.y - currentMousePosition.y, Input.mousePosition.x - currentMousePosition.x, 0f) / 5f);
+            this.cameraPivot.eulerAngles += (new Vector3(currentMousePosition.y - Input.mousePosition.y, Input.mousePosition.x - currentMousePosition.x, 0f) / 5f);
 
             this.newRotation = cameraPivot.rotation;
 
