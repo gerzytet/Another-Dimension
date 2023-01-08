@@ -96,6 +96,7 @@ public class Player : MonoBehaviour
     {
         health = maxHealth;
         transform.position = respawnPoint;
+        rb.velocity = Vector3.zero;
     }
 
     void FixedUpdate()
