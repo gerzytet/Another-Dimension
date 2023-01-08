@@ -39,6 +39,7 @@ public class Player : MonoBehaviour
     //Camera parameters
     public float rotationAmount;
     public float rotationTime;
+    public float maxCameraYAngle;
 
     public static Player instance;
     public float cameraDistance = 5f;
@@ -169,7 +170,7 @@ public class Player : MonoBehaviour
         {
             this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
 
-            this.cameraPivot.eulerAngles += (new Vector3(Input.mousePosition.y - currentMousePosition.y, Input.mousePosition.x - currentMousePosition.x, 0f) / 5f);
+            this.cameraPivot.eulerAngles += (new Vector3(Input.mousePosition.y - currentMousePosition.y, currentMousePosition.x - Input.mousePosition.x, 0f) / 5f);
 
             this.newRotation = cameraPivot.rotation;
 
