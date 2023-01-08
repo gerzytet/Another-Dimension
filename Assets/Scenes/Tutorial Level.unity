@@ -4278,6 +4278,10 @@ PrefabInstance:
       value: Cubeman
       objectReference: {fileID: 0}
     - target: {fileID: 3737482719644922262, guid: 5b4debee8eaa726498a6162a429feaba, type: 3}
+      propertyPath: speed
+      value: 1.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 3737482719644922262, guid: 5b4debee8eaa726498a6162a429feaba, type: 3}
       propertyPath: forceZ
       value: 1
       objectReference: {fileID: 0}
