@@ -161,18 +161,9 @@ public class Player : MonoBehaviour
     {
         if (is3DMode)
         {
-            if (Input.GetKey(KeyCode.Q))
-            {
-                this.newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
-            }
-            if (Input.GetKey(KeyCode.E))
-            {
-                this.newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
-            }
-
             this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
 
-            this.cameraPivot.eulerAngles += (new Vector3(currentMousePosition.y - Input.mousePosition.y, currentMousePosition.x - Input.mousePosition.x, 0f) / 5f);
+            this.cameraPivot.eulerAngles += (new Vector3(Input.mousePosition.y - currentMousePosition.y, Input.mousePosition.x - currentMousePosition.x, 0f) / 5f);
 
             this.newRotation = cameraPivot.rotation;
 
