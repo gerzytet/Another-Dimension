@@ -50,7 +50,7 @@ GameObject:
   - component: {fileID: -397012997264798141}
   m_Layer: 6
   m_Name: Cubeman
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -151,10 +151,12 @@ MonoBehaviour:
   slowdown: 0
   jumpHeight: 4
   maxHealth: 3
+  jetpackMaxFuel: 0
   is3DMode: 0
   forceZ: 0
   rotationAmount: 1
   rotationTime: 4
+  maxCameraYAngle: 0
   cameraDistance: 5
   genericHitSounds:
   - {fileID: 8300000, guid: 4dbcf9b86fa99104489fd70ec2c4eb21, type: 3}
