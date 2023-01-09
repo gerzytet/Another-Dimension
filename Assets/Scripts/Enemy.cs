@@ -9,11 +9,17 @@ public class Enemy : MonoBehaviour
 {
     public float speed;
     public float maxSpeed;
+    private Rigidbody rb;
+
+    void Start() {
+        this.rb = GetComponent<Rigidbody>();
+    }
+
     void Update()
     {
         transform.LookAt(Player.instance.transform);
-        GetComponent<Rigidbody>().AddForce(transform.forward * (speed * Time.deltaTime));
-        GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(GetComponent<Rigidbody>().velocity, speed);
+        rb.AddForce(transform.forward * (speed * Time.deltaTime));
+        rb.velocity = Vector3.ClampMagnitude(GetComponent<Rigidbody>().velocity, speed);
     }
 
     private void OnCollisionEnter(Collision collision)
