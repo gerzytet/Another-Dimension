@@ -80,12 +80,12 @@ public class Player : MonoBehaviour
         this.jetpackFuel = jetpackMaxFuel;
         
         instance = this;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
     void Update()
     {
-        handleAction();
         handleCamera();
     }
 
@@ -106,6 +106,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        handleAction();
         if (dimensionTransitionFlag)
         {
             if (!is3DMode)

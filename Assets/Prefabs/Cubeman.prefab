@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zDimensionWidth: 100
-  speed: 5
+  speed: 12
   slowdown: 0
   jumpHeight: 4
   maxHealth: 3
