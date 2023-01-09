@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     public int jetpackMaxFuel;
     private int jetpackFuel;
     private RaycastHit groundedCheckRaycastHit;
+    private int contacts = 0;
 
     //Camera fields
     private Transform cameraPivot;
@@ -157,7 +158,7 @@ public class Player : MonoBehaviour
         }
 
         //Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded() && jumpCooldown <= 0)
+        if (Input.GetKey(KeyCode.Space) && isGrounded() && jumpCooldown <= 0 && contacts > 0)
         {
             rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
             jumpCooldown = 20;
@@ -253,5 +254,15 @@ public class Player : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        contacts++;
+    }
+    
+    public void OnCollisionExit(Collision collision)
+    {
+        contacts--;
     }
 }
