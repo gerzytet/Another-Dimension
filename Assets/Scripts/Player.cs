@@ -23,6 +23,8 @@ public class Player : MonoBehaviour
     private int jumpCooldown = 0;
     public int health { get; private set; } = 0;
     public int maxHealth = 3;
+    public int jetpackMaxFuel;
+    private int jetpackFuel;
     private RaycastHit groundedCheckRaycastHit;
 
     //Camera fields
@@ -247,7 +249,7 @@ public class Player : MonoBehaviour
     }
 
     private bool isGrounded() {
-        if (Physics.BoxCast(playerCollider.bounds.center, playerCollider.size * 0.49f, Vector3.down, out groundedCheckRaycastHit, transform.rotation, playerCollider.size.y /2f)) {
+        if (Physics.BoxCast(playerCollider.bounds.center, playerCollider.size * 0.495f, Vector3.down, out groundedCheckRaycastHit, transform.rotation, playerCollider.size.y /2f)) {
             return true;
         }
         return false;
