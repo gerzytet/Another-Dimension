@@ -20,10 +20,10 @@ public class Player : MonoBehaviour
 
     //jump-related variables
     public float jumpHeight;
-    private int floorContacts = 0;
     private int jumpCooldown = 0;
     public int health { get; private set; } = 0;
     public int maxHealth = 3;
+    private RaycastHit groundedCheckRaycastHit;
 
     //Camera fields
     private Transform cameraPivot;
@@ -74,6 +74,7 @@ public class Player : MonoBehaviour
         this.CameraAngleConstant2D = Quaternion.AngleAxis(0, Vector3.up);
         this.currentMousePosition = new Vector3(Screen.width/2f, Screen.height/2f, 0f); //initial camera poisition is center of screen
         dimensionTransitionFlag = false;
+        this.jetpackFuel = jetpackMaxFuel;
         
         instance = this;
     }
@@ -118,6 +119,8 @@ public class Player : MonoBehaviour
             }
             dimensionTransitionFlag = false;
         }
+
+
         checkDeath();
         jumpCooldown--;
         Vector2 xzVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
@@ -127,6 +130,7 @@ public class Player : MonoBehaviour
 
     private void handleAction()
     {
+        //WASD Movement
         void Move(Vector3 direction)
         {
             rb.AddForce(Vector3.ProjectOnPlane(direction * speed, Vector3.up));
@@ -150,18 +154,20 @@ public class Player : MonoBehaviour
             Move(playerCamera.transform.right);
         }
 
-        if (Input.GetKey(KeyCode.Space) && floorContacts > 0 && jumpCooldown <= 0)
+        //Jumping
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded() && jumpCooldown <= 0)
         {
             rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
             jumpCooldown = 20;
         }
 
+        //Jetpack
+
+        //Switch Dimension Mode
         if (Input.GetKeyDown(KeyCode.Z))
         {
             this.switchDimensionMode();
         }
-
-        floorContacts = 0;
     }
 
     private void handleCamera()
@@ -240,11 +246,10 @@ public class Player : MonoBehaviour
         health = Math.Clamp(health + amount, 0, maxHealth);
     }
 
-    public void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.transform.position.y < transform.position.y)
-        {
-            floorContacts++;
+    private bool isGrounded() {
+        if (Physics.BoxCast(playerCollider.bounds.center, playerCollider.size * 0.49f, Vector3.down, out groundedCheckRaycastHit, transform.rotation, playerCollider.size.y /2f)) {
+            return true;
         }
+        return false;
     }
 }
