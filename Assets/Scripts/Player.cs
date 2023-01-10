@@ -94,6 +94,7 @@ public class Player : MonoBehaviour
         instance = this;
         //Cursor.lockState = CursorLockMode.Locked;
         animator = GetComponentInChildren<Animator>();
+        animator.Play("Blend Tree");
     }
 
     // Update is called once per frame
@@ -107,6 +108,16 @@ public class Player : MonoBehaviour
     {
         float blend = Mathf.InverseLerp(0, maxRunThreshold, rb.velocity.magnitude);
         animator.SetFloat("Speed", blend);
+        Vector2 xz(Vector3 xyz)
+        {
+            return new Vector2(xyz.x, xyz.z);
+        }
+
+        if (rb.velocity.magnitude > 0.1f)
+        {
+            animator.gameObject.transform.rotation =
+                Quaternion.Euler(0, Vector2.SignedAngle(xz(rb.velocity), xz(Vector2.right)) + 90, 0);
+        }
     }
 
     private void checkDeath()
@@ -192,6 +203,18 @@ public class Player : MonoBehaviour
         {
             this.switchDimensionMode();
         }
+        
+        Vector2 xz(Vector3 xyz)
+        {
+            return new Vector2(xyz.x, xyz.z);
+        }
+        
+        Vector2 limitedVelocity = xz(rb.velocity);
+        if (limitedVelocity.magnitude > maxRunThreshold)
+        {
+            limitedVelocity = limitedVelocity.normalized * maxRunThreshold;
+        }
+        rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.y);
     }
 
     private void handleCamera()
