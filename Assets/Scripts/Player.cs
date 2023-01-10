@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
     private int jetpackFuel;
     private RaycastHit groundedCheckRaycastHit;
     private int contacts = 0;
+    private bool isJetpackActive;
+    public float jetpackStrength;
 
     //Camera fields
     private Transform cameraPivot;
@@ -92,6 +94,7 @@ public class Player : MonoBehaviour
         this.CameraAngleConstant2D = Quaternion.AngleAxis(0, Vector3.up);
         dimensionTransitionFlag = false;
         this.jetpackFuel = jetpackMaxFuel;
+        this.isJetpackActive = false;
         
         instance = this;
         //Cursor.lockState = CursorLockMode.Locked;
@@ -159,6 +162,10 @@ public class Player : MonoBehaviour
             dimensionTransitionFlag = false;
         }
 
+        if (isJetpackActive){
+            print("Jetpack on");
+            rb.AddForce(Vector3.up * this.jetpackStrength, ForceMode.Impulse);
+        }
 
         checkDeath();
         jumpCooldown--;
@@ -194,13 +201,21 @@ public class Player : MonoBehaviour
         }
 
         //Jumping
-        if (Input.GetKey(KeyCode.Space) && isGrounded() && jumpCooldown <= 0 && contacts > 0)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded() && jumpCooldown <= 0 && contacts > 0)
         {
             rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
             jumpCooldown = 20;
         }
 
         //Jetpack
+        if (Input.GetKey(KeyCode.Space) && !isGrounded() && jumpCooldown < 10)
+        {
+            this.isJetpackActive = true;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space)) {
+            this.isJetpackActive = false;
+        }
 
         //Switch Dimension Mode
         if (Input.GetKeyDown(KeyCode.Z))
