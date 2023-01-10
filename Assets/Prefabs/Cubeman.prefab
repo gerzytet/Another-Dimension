@@ -152,8 +152,7 @@ MonoBehaviour:
   slowdown: 0
   jumpHeight: 4
   maxHealth: 3
-  jetpackMaxFuel: 100
-  jetpackStrength: 0.3
+  jetpackMaxFuel: 0
   is3DMode: 0
   verticalCameraLimit: 0
   forceZ: 0
