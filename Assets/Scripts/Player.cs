@@ -158,8 +158,20 @@ public class Player : MonoBehaviour
             }
             dimensionTransitionFlag = false;
         }
+        
+        //Jumping
+        if (Input.GetKey(KeyCode.Space) && isGrounded() && jumpCooldown <= 0 && contacts > 0)
+        {
+            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+            jumpCooldown = 20;
+        }
 
-
+        //Switch Dimension Mode
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            this.switchDimensionMode();
+        }
+        
         checkDeath();
         jumpCooldown--;
         Vector2 xzVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
@@ -193,20 +205,7 @@ public class Player : MonoBehaviour
             Move(playerCamera.transform.right);
         }
 
-        //Jumping
-        if (Input.GetKey(KeyCode.Space) && isGrounded() && jumpCooldown <= 0 && contacts > 0)
-        {
-            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
-            jumpCooldown = 20;
-        }
-
         //Jetpack
-
-        //Switch Dimension Mode
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            this.switchDimensionMode();
-        }
         
         Vector2 xz(Vector3 xyz)
         {
@@ -228,11 +227,9 @@ public class Player : MonoBehaviour
             this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
 
             if (Input.mouseScrollDelta.y > 0 && cameraDistance > -1f) {
-                print("scrolling in");
                 cameraDistance -= 0.5f;
             }
             else if (Input.mouseScrollDelta.y < 0 && cameraDistance < 12f) {
-                print("scrolling out");
                 cameraDistance += 0.5f;
             }
 
