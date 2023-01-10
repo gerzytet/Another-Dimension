@@ -38,6 +38,7 @@ public class Player : MonoBehaviour
     private Vector3 currentMousePosition;
     public float verticalCameraLimit;
     private Vector3 newCameraAngle;
+    private float oldCameraDistance;
 
     public bool forceZ;
 
@@ -272,6 +273,8 @@ public class Player : MonoBehaviour
             print("3d->2d");
             //Save the current camera rotation, in global context
             this.previous3DRotation = this.previous3DRotation = this.cameraPivot.localRotation * transform.rotation;
+            this.oldCameraDistance = cameraDistance;
+            this.cameraDistance = -5f;
             this.newRotation = this.CameraAngleConstant2D;
             this.playerCamera.orthographic = true;
             //switch to layer "3d", looking up by name
@@ -283,6 +286,7 @@ public class Player : MonoBehaviour
         {
             print("2d->3d");
             //Load back the original camera configuration, in global context
+            this.cameraDistance = oldCameraDistance;
             this.newRotation = this.previous3DRotation * Quaternion.Inverse(this.transform.rotation);
             this.playerCamera.orthographic = false;
             gameObject.layer = LayerMask.NameToLayer("3d");
