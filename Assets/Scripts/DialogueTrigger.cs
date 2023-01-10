@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -14,10 +15,7 @@ public class DialogueTrigger : MonoBehaviour
         if (player != null && !triggered)
         {
             triggered = true;
-            foreach (string line in text.Split('\n'))
-            {
-                DialogueManager.instance.sentences.Enqueue(line);
-            }
+            DialogueManager.instance.SetDialogue(new List<string>(text.Split("\n")));
         }
     }
 }

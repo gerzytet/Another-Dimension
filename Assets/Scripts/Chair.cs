@@ -87,6 +87,7 @@ public class Chair : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
         p.speed = oldSpeed;
+        Player.instance.fallThreshold = -10f;
         Destroy(gameObject);
     }
     void Update()

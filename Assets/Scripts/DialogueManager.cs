@@ -18,6 +18,7 @@ public class DialogueManager : MonoBehaviour
     public Material broken;
     public Material blurred;
     public Material clear;
+    public Image clickPrompt;
 
     void Start()
     {
@@ -50,11 +51,17 @@ public class DialogueManager : MonoBehaviour
             obj.SetActive(sentences.Count > 0);
         }
 
+        clickPrompt.color = Color.clear;
         if (sentences.Count > 0)
         {
             string curr = sentences.Peek();
             string slice = curr.Substring(0, (int)progress);
             tmp.text = slice;
+
+            if (Mathf.Abs(progress - curr.Length) < Mathf.Epsilon)
+            {
+                clickPrompt.color = Color.Lerp(Color.clear, Color.white, Mathf.Sin(Time.time * 5) / 4 + 0.5f);
+            }
         }
     }
     
