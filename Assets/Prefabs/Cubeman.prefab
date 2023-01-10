@@ -154,10 +154,11 @@ MonoBehaviour:
   maxHealth: 3
   jetpackMaxFuel: 0
   is3DMode: 0
+  verticalCameraLimit: 0
   forceZ: 0
   rotationAmount: 1
   rotationTime: 4
-  maxCameraYAngle: 0
+  maxCameraVerticalAngle: 85
   cameraDistance: 5
   genericHitSounds:
   - {fileID: 8300000, guid: 4dbcf9b86fa99104489fd70ec2c4eb21, type: 3}
@@ -166,6 +167,7 @@ MonoBehaviour:
   respawnPoint: {x: 0, y: 0, z: 0}
   fallThreshold: -10
   dimensionTransitionFlag: 0
+  maxRunThreshold: 0
 --- !u!114 &3737482719644922251
 MonoBehaviour:
   m_ObjectHideFlags: 0

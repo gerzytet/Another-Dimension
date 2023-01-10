@@ -36,13 +36,15 @@ public class Player : MonoBehaviour
     private Quaternion CameraAngleConstant2D;
     public bool is3DMode;
     private Vector3 currentMousePosition;
+    public float verticalCameraLimit;
+    private Vector3 newCameraAngle;
 
     public bool forceZ;
 
     //Camera parameters
     public float rotationAmount;
     public float rotationTime;
-    public float maxCameraYAngle;
+    public float maxCameraVerticalAngle;
 
     public static Player instance;
     public float cameraDistance = 5f;
@@ -76,6 +78,7 @@ public class Player : MonoBehaviour
         this.playerCollider = rb.gameObject.GetComponent<BoxCollider>();
         this.is3DMode = true;
         playerAudioSource = GetComponent<AudioSource>();
+        animator = GetComponentInChildren<Animator>();
         
         //Find components
         this.cameraPivot = transform.Find("CameraPivot");
@@ -87,12 +90,13 @@ public class Player : MonoBehaviour
         health = maxHealth;
         respawnPoint = transform.position;
         this.CameraAngleConstant2D = Quaternion.AngleAxis(0, Vector3.up);
-        this.currentMousePosition = new Vector3(Screen.width/2f, Screen.height/2f, 0f); //initial camera poisition is center of screen
         dimensionTransitionFlag = false;
         this.jetpackFuel = jetpackMaxFuel;
         
         instance = this;
         //Cursor.lockState = CursorLockMode.Locked;
+
+        Cursor.visible = false;
         animator = GetComponentInChildren<Animator>();
         animator.Play("Blend Tree");
     }
@@ -223,7 +227,20 @@ public class Player : MonoBehaviour
         {
             this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
 
-            this.cameraPivot.eulerAngles += (new Vector3(currentMousePosition.y - Input.mousePosition.y, Input.mousePosition.x - currentMousePosition.x, 0f) / 5f);
+            this.newCameraAngle = new Vector3(((Screen.height / 2f) - Input.mousePosition.y) * 180 / Screen.height, (Input.mousePosition.x - (Screen.width / 2f)) * 360 / Screen.width , 0f);
+
+            if (Mathf.Abs(this.newCameraAngle.x) > this.maxCameraVerticalAngle) {
+                if (this.newCameraAngle.x > 0) {
+                    this.newCameraAngle.x = this.maxCameraVerticalAngle;
+                }
+                else {
+                    this.newCameraAngle.x = -this.maxCameraVerticalAngle;
+                }
+            }
+
+            this.cameraPivot.eulerAngles = this.newCameraAngle;
+
+            print( this.cameraPivot.eulerAngles);
 
             this.newRotation = cameraPivot.rotation;
 
