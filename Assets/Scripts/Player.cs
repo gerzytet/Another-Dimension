@@ -242,6 +242,15 @@ public class Player : MonoBehaviour
         {
             this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
 
+            if (Input.mouseScrollDelta.y > 0 && cameraDistance > -1f) {
+                print("scrolling in");
+                cameraDistance -= 0.5f;
+            }
+            else if (Input.mouseScrollDelta.y < 0 && cameraDistance < 12f) {
+                print("scrolling out");
+                cameraDistance += 0.5f;
+            }
+
             this.newCameraAngle = new Vector3(((Screen.height / 2f) - Input.mousePosition.y) * 180 / Screen.height, (Input.mousePosition.x - (Screen.width / 2f)) * 360 / Screen.width , 0f);
 
             if (Mathf.Abs(this.newCameraAngle.x) > this.maxCameraVerticalAngle) {
@@ -254,8 +263,6 @@ public class Player : MonoBehaviour
             }
 
             this.cameraPivot.eulerAngles = this.newCameraAngle;
-
-            print( this.cameraPivot.eulerAngles);
 
             this.newRotation = cameraPivot.rotation;
 
