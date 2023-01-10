@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Enemy
   - HostileProjectile
+  - MetalFloor
+  - MoonFloor
   layers:
   - Default
   - TransparentFX
