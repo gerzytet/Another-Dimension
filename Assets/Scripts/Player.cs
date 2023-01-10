@@ -159,19 +159,6 @@ public class Player : MonoBehaviour
             dimensionTransitionFlag = false;
         }
         
-        //Jumping
-        if (Input.GetKey(KeyCode.Space) && isGrounded() && jumpCooldown <= 0 && contacts > 0)
-        {
-            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
-            jumpCooldown = 20;
-        }
-
-        //Switch Dimension Mode
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            this.switchDimensionMode();
-        }
-        
         checkDeath();
         jumpCooldown--;
         Vector2 xzVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
@@ -222,6 +209,19 @@ public class Player : MonoBehaviour
 
     private void handleCamera()
     {
+        //Jumping
+        if (Input.GetKey(KeyCode.Space) && isGrounded() && jumpCooldown <= 0 && contacts > 0)
+        {
+            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+            jumpCooldown = 20;
+        }
+
+        //Switch Dimension Mode
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            this.switchDimensionMode();
+        }
+
         if (is3DMode)
         {
             this.cameraPivot.rotation = Quaternion.Lerp(cameraPivot.rotation, newRotation, Time.deltaTime * rotationTime);
