@@ -76,6 +76,7 @@ public class Player : MonoBehaviour
         this.playerCollider = rb.gameObject.GetComponent<BoxCollider>();
         this.is3DMode = true;
         playerAudioSource = GetComponent<AudioSource>();
+        animator = GetComponentInChildren<Animator>();
         
         //Find components
         this.cameraPivot = transform.Find("CameraPivot");
@@ -93,7 +94,8 @@ public class Player : MonoBehaviour
         
         instance = this;
         //Cursor.lockState = CursorLockMode.Locked;
-        animator = GetComponentInChildren<Animator>();
+
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
