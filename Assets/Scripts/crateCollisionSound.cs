@@ -20,13 +20,13 @@ public class crateCollisionSound : MonoBehaviour
         {
             crateAudioSource.pitch = UnityEngine.Random.Range(scale(collision.relativeVelocity.magnitude, 0.0f, velocityThreshold, 0.7f, 0.5f), pitchMaximum);
             crateAudioSource.PlayOneShot
-                (crateCollisionClips[randomIndex], collision.relativeVelocity.magnitude);
+                (crateCollisionClips[randomIndex], collision.relativeVelocity.magnitude / 2);
         }
         else
         {
             crateAudioSource.pitch = 1;
             crateAudioSource.PlayOneShot
-                (crateCollisionClips[randomIndex], 0.7f);
+                (crateCollisionClips[randomIndex], 0.4f);
         }
 
     }
