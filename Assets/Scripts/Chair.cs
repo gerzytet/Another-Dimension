@@ -55,6 +55,7 @@ public class Chair : MonoBehaviour
         Player.instance.fallThreshold = -1000;
         sit = false;
         Player p = Player.instance;
+        p.speed = oldSpeed;
         p.GetComponent<Rigidbody>().useGravity = true;
         DialogueManager.instance.enableSkip = false;
         yield return new WaitForSeconds(3);
@@ -86,7 +87,6 @@ public class Chair : MonoBehaviour
             p.transform.position = new Vector3(x, p.transform.position.y, z);
             yield return new WaitForFixedUpdate();
         }
-        p.speed = oldSpeed;
         Player.instance.fallThreshold = -10f;
         Destroy(gameObject);
     }
