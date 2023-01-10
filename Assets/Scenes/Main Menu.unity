@@ -385,7 +385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 018220a625adab74489c62aabf88474d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainSceneName: SampleScene
+  mainSceneName: Tutorial Level
 --- !u!82 &541580057
 AudioSource:
   m_ObjectHideFlags: 0
