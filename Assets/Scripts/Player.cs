@@ -56,9 +56,21 @@ public class Player : MonoBehaviour
 
     //flags
     public bool dimensionTransitionFlag;
+    
+    //animation
+    private Animator animator;
+    public float maxRunThreshold;
 
     void Start()
     {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            //instance.transform.position = transform.position;
+            instance.respawnPoint = transform.position;
+            return;
+        }
+        
         //Get components
         this.rb = GetComponent<Rigidbody>();
         this.playerCollider = rb.gameObject.GetComponent<BoxCollider>();
@@ -80,13 +92,21 @@ public class Player : MonoBehaviour
         this.jetpackFuel = jetpackMaxFuel;
         
         instance = this;
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
         handleCamera();
+        Animate();
+    }
+
+    private void Animate()
+    {
+        float blend = Mathf.InverseLerp(0, maxRunThreshold, rb.velocity.magnitude);
+        animator.SetFloat("Speed", blend);
     }
 
     private void checkDeath()

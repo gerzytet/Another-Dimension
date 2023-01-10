@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Chair : MonoBehaviour
 {
@@ -51,13 +52,42 @@ public class Chair : MonoBehaviour
         yield return new WaitForSeconds(5);
         DialogueManager.instance.SetDialogue(new() {dialogue2});
         explodeEverything();
+        Player.instance.fallThreshold = -1000;
         sit = false;
         Player p = Player.instance;
         p.GetComponent<Rigidbody>().useGravity = true;
-        p.speed = oldSpeed;
         DialogueManager.instance.enableSkip = false;
         yield return new WaitForSeconds(3);
         DialogueManager.instance.HideDialogue();
+        yield return new WaitForSeconds(4);
+        DialogueManager.instance.enableSkip = true;
+        while (p.transform.position.y < 1500)
+        {
+            p.GetComponent<Rigidbody>().AddForce(Vector3.up * 50);
+            yield return new WaitForFixedUpdate();
+        }
+        DontDestroyOnLoad(Player.instance);
+        DontDestroyOnLoad(transform.parent.gameObject);
+        p.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        var op = SceneManager.LoadSceneAsync("Scenes/Level 1 - Moon");
+        while (!op.isDone)
+        {
+            yield return null;
+        }
+
+        Vector2 xz(Vector3 xyz)
+        {
+            return new Vector2(xyz.x, xyz.z);
+        }
+        while (Vector2.Distance(xz(p.transform.position) ,xz(p.respawnPoint)) > 0.1f)
+        {
+            float x = Mathf.MoveTowards(transform.position.x, p.respawnPoint.x, 1f);
+            float z = Mathf.MoveTowards(transform.position.z, p.respawnPoint.z, 1f);
+            p.transform.position = new Vector3(x, p.transform.position.y, z);
+            yield return new WaitForFixedUpdate();
+        }
+        p.speed = oldSpeed;
+        Destroy(gameObject);
     }
     void Update()
     {
